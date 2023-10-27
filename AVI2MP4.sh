@@ -1,0 +1,1 @@
+#!/bin/bashffmpeg -i SPM.avi SPM.mp4

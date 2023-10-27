@@ -1,0 +1,12 @@
+# Ignore these files
+outputs/
+movies/
+ds_convergence/
+ds_convergence/*
+dt_convergence/
+dt_convergence/*
+.DS_Store
+*.avi
+*.mp4
+*/*.txt
+.DS_Store
