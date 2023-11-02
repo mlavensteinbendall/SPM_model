@@ -5,12 +5,12 @@ from function_LW2 import LW_SPM2
 
 # Check convergence in s-dimension.
 
-# ds0 = 0.005
-# nsamples = 10
-# dsvals = np.zeros(nsamples)
-# for n in range(nsamples): dsvals[n] = ds0*(n+1)
-# dtvals = 0.0025
-# filename = 'ds_convergence/'
+ds0 = 0.005
+nsamples = 10
+dsvals = np.zeros(nsamples)
+for n in range(nsamples): dsvals[n] = ds0*(n+1)
+dtvals = 0.001
+filename = 'ds_convergence/'
 
 # for i,dsi in enumerate(dsvals):
 
