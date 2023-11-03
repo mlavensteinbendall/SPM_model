@@ -1,10 +1,14 @@
+# Title: Code to execute the SPM model.
+# Author: Stephen Williams
+# Notes:
+##
 
 import numpy as np # Numpy for numpy
 import matplotlib.pyplot as plt
 
-def LW_SPM2(ds,dt,ntag,filename):
+def LW_SPM(ds,dt,ntag,filename):
 
-    Smax = 20 # Maximum size to calculate
+    Smax = 15 # Maximum size to calculate
     Tmax = 1 # End time
     Nsizes = int(Smax/ds)+1 # Total number of size-steps
     Ntimes = int(Tmax/dt)+1 # Total number of time-steps
