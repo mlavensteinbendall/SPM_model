@@ -1,6 +1,6 @@
 # Title: Code to process data to perform convergence test on the model.
 # Author: Stephen Williams
-# Notes:W orks on a dataset varrying ds and dt (within CFL).
+# Notes: Works on a dataset varrying ds and dt (within CFL).
 ##
 
 import numpy as np # Numpy for numpy

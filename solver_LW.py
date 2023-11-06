@@ -1,4 +1,3 @@
-
 # Title: 2st order solver, SPM (age), no mortality/reproduction
 # Author: Stephen Williams
 # Date: 27th September 2023

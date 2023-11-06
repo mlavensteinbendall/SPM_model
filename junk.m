@@ -1,3 +1,5 @@
+% Matlab generic junk file
+
 %% Load the files
 
 %filename = 'output_burger1.txt';

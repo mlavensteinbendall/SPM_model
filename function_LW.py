@@ -1,6 +1,7 @@
 # Title: Code to execute the SPM model.
 # Author: Stephen Williams
-# Notes:
+# Notes: Refactored Lax-Wendroff solver.
+# Accurate to 2nd order in space and time.
 ##
 
 import numpy as np # Numpy for numpy
