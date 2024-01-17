@@ -2,7 +2,7 @@
 import numpy as np # Numpy for numpy
 import matplotlib.pyplot as plt
 
-data = np.loadtxt('mu_test/test_11.txt')
+data = np.loadtxt('mu_test/test_1.txt')
 
 dt = 0.001
 Tmax = 1 # End time
@@ -20,5 +20,6 @@ for i in range(0,1000,100):
     # plt.plot(sizes,data[i,:])
     tt = dt*i
     sol = np.exp(-(sizes-tt-10)**2)*np.exp(-tt)
-    plt.plot(sizes,sol-data[i,:])
+    plt.plot(sizes,sol)
+    plt.plot(sizes,data[i,:],'r:')
     plt.show()

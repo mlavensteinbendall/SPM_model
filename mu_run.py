@@ -14,14 +14,21 @@ nsamples = 5 # Number of runs
 dsvals = np.zeros(nsamples) # Store for ds values.
 dtvals = np.zeros(nsamples) # Store for dt values.
 
-dsi = 0.005
+# Set the values for ds
+dsvals[0] = 0.005; dsvals[1] = 0.010
+dsvals[2] = 0.020; dsvals[3] = 0.025
+dsvals[4] = 0.050
 dt = 0.001
 ## End of ds test section
 
 filename = 'mu_test/' # Folder name for data storage.
 
-print('Entering loop ' + str(11)) # Progress update, loop start.
-N = LW_SPM2(dsi,dt,11,filename) # Model - dt run.
-print('S Loop ' + str(0) + ' Complete.') # Progress update, loop end.
+# Execute the model for each of the set of pairs of values ds/dt.
+for i,dsi in enumerate(dsvals):
+    print('Entering loop ' + str(i)) # Progress update, loop start.
+    N = LW_SPM2(dsi,dt,i,filename) # Model - dt run.
+    print('S Loop ' + str(i) + ' Complete.') # Progress update, loop end.
+
+##
 
 

@@ -24,7 +24,7 @@ def LW_SPM2(ds,dt,ntag,filename):
     #g[0:int(Nsizes/2)] = np.linspace(0,-1,int(Nsizes/2))
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
-    mu = np.zeros([Nsizes]) # mortality
+    mu = np.ones([Nsizes]) # mortality
     mu[int(Nsizes/2):-1] = 1
 
     # Difference matrices
