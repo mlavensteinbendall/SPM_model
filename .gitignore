@@ -5,6 +5,8 @@ ds_convergence/
 ds_convergence/*
 dt_convergence/
 dt_convergence/*
+mu_test/
+mu_test/*
 .DS_Store
 *.avi
 *.mp4
