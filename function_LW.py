@@ -16,6 +16,8 @@ def LW_SPM(ds,dt,ntag,filename):
     sizes = np.linspace(0,Smax,num=Nsizes) # Grid of size points
     times = np.linspace(0,Tmax,num=Ntimes) # Grid of times points
 
+    # print(Nsizes)
+
     # Initial condition
     N = np.zeros([Nsizes]) # Store for the current timepoint
 
@@ -25,7 +27,11 @@ def LW_SPM(ds,dt,ntag,filename):
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
     mu = np.zeros([Nsizes]) # mortality
-    mu[int(Nsizes/2):-1] = 0
+    # mu[int(Nsizes/2):-1] = 0
+    mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]*ds
+    # mu = sizes
+
+    print(mu)
 
     # Difference matrices
     D1 = np.zeros([Nsizes,Nsizes]) # Store for 1st finite difference matrix
@@ -39,10 +45,13 @@ def LW_SPM(ds,dt,ntag,filename):
 
     # Mid points
     for ii in range(1,Nsizes-2): # Loop through the diagonals
-        D1[ii,ii-1] = -0.5/ds;   D1[ii,ii+1] = 0.5/ds
-        D2[ii,ii-1] = 1/(ds**2); D2[ii,ii] = -2/(ds**2); D2[ii,ii+1] = 1/(ds**2)
+        D1[ii,ii-1] = -0.5/ds;   D1[ii,ii+1] = 0.5/ds  # 1st derivative centeral finite-difference
+        D2[ii,ii-1] = 1/(ds**2); D2[ii,ii] = -2/(ds**2); D2[ii,ii+1] = 1/(ds**2) # 2nd derivative centeral difference 
         # D1[ii,ii-2] = (1/12)/ds; D1[ii,ii-1] = (-2/3)/ds; D1[ii,ii+1] = (2/3)/ds; D1[ii,ii+2] = (-1/12)/ds
         # D2[ii,ii-2] = (-1/12)/(ds**2); D2[ii,ii-1] = (4/3)/(ds**2); D2[ii,ii] = (-5/2)/(ds**2); D2[ii,ii+1] = (4/3)/(ds**2); D2[ii,ii+2] = (-1/12)/(ds**2)
+
+    # print(D1)
+    # print(D2)
 
     # Difference co-efficients
     gp  = D1.dot(g) # Get numerical first derivative of g
@@ -57,7 +66,11 @@ def LW_SPM(ds,dt,ntag,filename):
     a3[:] = (g[:]**2)*(dt**2)/2
 
     # Initial condition
-    N[:] = np.exp(-(sizes-10)**2) # Initial condition setter
+    N[:] = np.exp(-(sizes-10)**2) # Initial condition setter  -- Gaussian centered at 10
+
+    # plt.plot(N)
+    # plt.title('N0')
+    # plt.show()
 
     with open(filename + 'test_' + str(ntag) + '.txt', 'w') as file: # Initialise an outputter file (safe)
         for t,T in enumerate(times): # Loop on times
@@ -79,3 +92,18 @@ def LW_SPM(ds,dt,ntag,filename):
             file.write(" ")
         file.write("\n")
             
+    # Print the solution over time
+    # plt.plot(N)
+    # plt.title('N_final')
+    # plt.show()
+
+    size_values = np.arange(len(N)) * ds
+
+    plt.plot(size_values, N)
+    plt.xlabel('Size')
+    plt.ylabel('Population')
+    plt.title('Population Based on Size at Final Time')
+    plt.show()
+
+    
+        

@@ -19,12 +19,26 @@ Need to type of the dt notes.
 r potentially independent of s, hype.
 no mortality is clear from exp'rm.
 
-# Morgan's Notes
-2024-02-02 ==========================================================================
+## Morgan Lavenstein Bendall's Running Notes
+Files
 conv_test_run.py        -- run file
 function_LW.py          -- function that uses Lax-Wendroff method to solve the SPM
 conv_processing_d*.py   -- converges of method
 
-Task   
+Functions
+LW_SPM(ds,dt,ntag,filename) -- SPM model 
+    - Ploting N -- y-axis is population, x-axis is ds [0,Nsize]
+
+
+Task given by Steve:   
     - test the g(s) = exp(-s) and mu(s) = s
     - using analytic solution, check the convergence
+
+Test these cases (no reproduction):
+- original:             g(s) = 1 and mu(s) = 0
+- changing mortality:   g(s) = 1 and mu(s) = s
+- changing growth:      g(s) = exp(-s) and m(s) = 0
+- changing g & mu:      g(s) = exp(-s) and m(s) = s
+
+changing mortality 
+-
