@@ -16,22 +16,23 @@ def LW_SPM(ds,dt,ntag,filename):
     sizes = np.linspace(0,Smax,num=Nsizes) # Grid of size points
     times = np.linspace(0,Tmax,num=Ntimes) # Grid of times points
 
-    # print(Nsizes)
+    # print(sizes)
 
     # Initial condition
     N = np.zeros([Nsizes]) # Store for the current timepoint
 
     # Fitness functions
     g = np.ones([Nsizes]) # growth rate
-    #g[0:int(Nsizes/2)] = np.linspace(0,-1,int(Nsizes/2))
+    # g[0:int(Nsizes/2)] = np.linspace(0,-1,int(Nsizes/2))
+    g[0:int(Nsizes/2)] = np.exp(- sizes[0:int(Nsizes/2)]/Smax)
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
     mu = np.zeros([Nsizes]) # mortality
-    # mu[int(Nsizes/2):-1] = 0
-    mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]*ds
-    # mu = sizes
+    mu[int(Nsizes/2):-1] = 0
+    # mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]
+    # mu = sizes * ds
 
-    print(mu)
+    print(g)
 
     # Difference matrices
     D1 = np.zeros([Nsizes,Nsizes]) # Store for 1st finite difference matrix
@@ -92,18 +93,18 @@ def LW_SPM(ds,dt,ntag,filename):
             file.write(" ")
         file.write("\n")
             
-    # Print the solution over time
+    # # Print the solution over time
     # plt.plot(N)
     # plt.title('N_final')
     # plt.show()
 
     size_values = np.arange(len(N)) * ds
 
-    plt.plot(size_values, N)
-    plt.xlabel('Size')
-    plt.ylabel('Population')
-    plt.title('Population Based on Size at Final Time')
-    plt.show()
+    # plt.plot(size_values, N)
+    # plt.xlabel('Size')
+    # plt.ylabel('Population')
+    # plt.title('Population Based on Size at Final Time')
+    # plt.show()
 
     
         

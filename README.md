@@ -41,4 +41,7 @@ Test these cases (no reproduction):
 - changing g & mu:      g(s) = exp(-s) and m(s) = s
 
 changing mortality 
--
+- does not seem to have order 2
+
+changing growth
+- seems to have order 2

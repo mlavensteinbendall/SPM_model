@@ -51,11 +51,11 @@ for i in range(ntests-1):
     print(' ')
 
 # Plot the log-log for the errors.
-# plt.loglog(Norm2)
-# plt.loglog(NormMax)
-# plt.show()
-
-plt.plot(Norm2)
-plt.plot(NormMax)
+plt.loglog(Norm2)
+plt.loglog(NormMax)
 plt.show()
+
+# plt.plot(Norm2)
+# plt.plot(NormMax)
+# plt.show()
 
