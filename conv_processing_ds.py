@@ -30,7 +30,29 @@ for i in range(ntests): # Loop through datafiles
     data = np.loadtxt('ds_convergence/test_' + str(i) + '.txt') # Load in relevant data.
     n = 1000 # Time-step of comparison.
     Tend = n*dt # Get the associated timepoint value.
-    sol = np.exp(-(sizes-10-Tend)**2) # Get analytical soltion.
+
+    # Analytical solution
+    # sol = np.exp(-(sizes-10-Tend)**2) # g(s)=1, mu=0
+
+    # g(s)= exp(-s), mu=s
+    # print(np.exp(sizes))
+    # epsilon = 1e-10  # Small offset to avoid zero in logarithm
+    # p = np.log(np.exp(sizes)-Tend)
+    phi = np.exp(-((np.log(np.exp(sizes)-Tend)-0.4)/0.1)**2)
+    Y   = np.log(np.exp(sizes)-Tend)
+    sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
+
+    # print(np.shape(sol))
+
+    # X = sizes
+    # Y = np.linspace(0,Tend, n)
+    # X, Y = np.meshgrid(X, Y)
+
+    # fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+    # plt.plot(sizes,sol)
+    # plt.show()
+    # norms
     Norm2[i] =  ((1/Nsizes)*np.sum((data[n,:]-sol[:])**2))**0.5 # L2 error.
     NormMax[i] = np.max(np.abs(data[n,:]-sol[:])) # L-Max error.
 
@@ -50,12 +72,16 @@ for i in range(ntests-1):
     print(np.log(NormMax[i+1]/NormMax[i]) / np.log(ds[i+1]/ds[i]) ) # L-Max q estimate.
     print(' ')
 
-# Plot the log-log for the errors.
-plt.loglog(Norm2)
-plt.loglog(NormMax)
-plt.show()
+# # Plot the log-log for the errors.
+plt.loglog(Norm2, label='Norm2')
+plt.loglog(NormMax, label='NormMax')
 
-# plt.plot(Norm2)
-# plt.plot(NormMax)
-# plt.show()
+# plt.plot(Norm2, label='Norm2')
+# plt.plot(NormMax, label='NormMax')
+
+plt.xlabel('ds')
+plt.ylabel('Norm')
+plt.title('Convergence based on ds')
+plt.legend()
+plt.show()
 

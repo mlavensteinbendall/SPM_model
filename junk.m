@@ -7,13 +7,13 @@
 %%filename = ['output_firstOrder.txt'];
 close all
 
-for i = 0
-filename = ['ds_convergence/test_' num2str(i) '.txt'];
-A = readmatrix(filename);
-
-plot(A(1,:))
-hold on
-end
+% for i = 0
+%     filename = ['ds_convergence/test_' num2str(i) '.txt'];
+%     A = readmatrix(filename);
+% 
+%     plot(A(1,:))
+%     hold on
+% end
 
 %% Make a video 
 
@@ -24,8 +24,8 @@ A = readmatrix(filename);
 
 % Dimensionalisation
 CFL = 0.5;
-ds = 0.1;
-dt = 0.005;
+ds = 0.005;
+dt = 0.001;
 
 % Array sizes
 [Nt,Ns] = size(A);

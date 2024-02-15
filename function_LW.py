@@ -24,15 +24,21 @@ def LW_SPM(ds,dt,ntag,filename):
     # Fitness functions
     g = np.ones([Nsizes]) # growth rate
     # g[0:int(Nsizes/2)] = np.linspace(0,-1,int(Nsizes/2))
-    g[0:int(Nsizes/2)] = np.exp(- sizes[0:int(Nsizes/2)]/Smax)
+    # g[0:int(Nsizes/2)] = np.exp(- sizes[0:int(Nsizes/2)])
+    g[:] = np.exp(- (sizes[:]))
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
     mu = np.zeros([Nsizes]) # mortality
-    mu[int(Nsizes/2):-1] = 0
-    # mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]
-    # mu = sizes * ds
+    # mu[int(Nsizes/2):-1] = 0
+    # mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]/Smax
+    # mu[:] = sizes[:]/Smax
+    mu[:] = sizes[:]
 
-    print(g)
+    # plt.plot(sizes,g)
+    # plt.plot(sizes,mu)
+    # plt.show()
+
+    # print(g)
 
     # Difference matrices
     D1 = np.zeros([Nsizes,Nsizes]) # Store for 1st finite difference matrix
@@ -67,11 +73,18 @@ def LW_SPM(ds,dt,ntag,filename):
     a3[:] = (g[:]**2)*(dt**2)/2
 
     # Initial condition
-    N[:] = np.exp(-(sizes-10)**2) # Initial condition setter  -- Gaussian centered at 10
+    # N[:] = np.exp(-(sizes-10)**2) # Initial condition setter  -- Gaussian centered at 10
 
-    # plt.plot(N)
-    # plt.title('N0')
-    # plt.show()
+    phi = np.exp(-((np.log(np.exp(sizes))-0.4)/0.1)**2)
+    Y   = np.log(np.exp(sizes))
+    sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp( sizes - (sizes * np.exp(sizes))))
+    N[:]=sol[:]
+
+    # plt.plot(sizes, N)
+    # plt.xlabel('Size')
+    # plt.ylabel('Population')
+    # plt.title('Population Based on Size at Initial Time')
+    # plt.show()  
 
     with open(filename + 'test_' + str(ntag) + '.txt', 'w') as file: # Initialise an outputter file (safe)
         for t,T in enumerate(times): # Loop on times
@@ -100,11 +113,13 @@ def LW_SPM(ds,dt,ntag,filename):
 
     size_values = np.arange(len(N)) * ds
 
-    # plt.plot(size_values, N)
-    # plt.xlabel('Size')
-    # plt.ylabel('Population')
-    # plt.title('Population Based on Size at Final Time')
-    # plt.show()
+    plt.plot(size_values, N)
+    plt.xlabel('Size')
+    plt.ylabel('Population')
+    plt.title('Population Based on Size at Final Time')
+    plt.show()
 
     
-        
+    # plt.plot(sizes, N)
+    # # plt.title('N0')
+    # plt.show()      
