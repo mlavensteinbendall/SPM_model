@@ -28,11 +28,12 @@ def LW_SPM(ds,dt,ntag,filename):
     g[:] = np.exp(- (sizes[:]))
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
-    mu = np.zeros([Nsizes]) # mortality
+    # mu = np.zeros([Nsizes]) # mortality
+    # mu = np.ones([Nsizes]) # mortality
     # mu[int(Nsizes/2):-1] = 0
     # mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]/Smax
     # mu[:] = sizes[:]/Smax
-    mu[:] = sizes[:]
+    mu = sizes
 
     # plt.plot(sizes,g)
     # plt.plot(sizes,mu)
@@ -74,11 +75,13 @@ def LW_SPM(ds,dt,ntag,filename):
 
     # Initial condition
     # N[:] = np.exp(-(sizes-10)**2) # Initial condition setter  -- Gaussian centered at 10
+    N[:] = np.exp(-((sizes-0.4)/0.1)**2)
 
-    phi = np.exp(-((np.log(np.exp(sizes))-0.4)/0.1)**2)
-    Y   = np.log(np.exp(sizes))
-    sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp( sizes - (sizes * np.exp(sizes))))
-    N[:]=sol[:]
+    # Steve
+    # phi = np.exp(-((np.log(np.exp(sizes))-0.4)/0.1)**2)
+    # Y   = np.log(np.exp(sizes))
+    # sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp( sizes - (sizes * np.exp(sizes))))
+    # N[:]=sol[:]
 
     # plt.plot(sizes, N)
     # plt.xlabel('Size')
@@ -111,13 +114,13 @@ def LW_SPM(ds,dt,ntag,filename):
     # plt.title('N_final')
     # plt.show()
 
-    size_values = np.arange(len(N)) * ds
+    # size_values = np.arange(len(N)) * ds
 
-    plt.plot(size_values, N)
-    plt.xlabel('Size')
-    plt.ylabel('Population')
-    plt.title('Population Based on Size at Final Time')
-    plt.show()
+    # plt.plot(size_values, N)
+    # plt.xlabel('Size')
+    # plt.ylabel('Population')
+    # plt.title('Population Based on Size at Final Time for ds = ' + str(ds))
+    # plt.show()
 
     
     # plt.plot(sizes, N)

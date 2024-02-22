@@ -33,14 +33,37 @@ for i in range(ntests): # Loop through datafiles
 
     # Analytical solution
     # sol = np.exp(-(sizes-10-Tend)**2) # g(s)=1, mu=0
+    # sol = np.exp(-(sizes-10-Tend)**2) * np.exp(-Tend) # g(s)=1, mu=1
+    # # sol = np.exp(-(sizes-10-Tend)**2) * np.exp(-sizes*Tend) # g(s)=1, mu=s
+    # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2) * np.exp((np.exp(-sizes)-sizes)*Tend) # g(s)=1, mu=s
+    # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2)* np.exp(np.exp(-sizes*Tend)) # g(s)=e(-s), mu=0
+    
+    # Y   = np.log(np.exp(sizes) - Tend)
+    # phi = np.exp(-((Y-0.4)/0.1)**2)
+    # sol = (phi/np.exp(Y*(np.exp(Y)-1)))*np.exp(Tend+sizes-sizes*np.exp(sizes))
+    # # sol = (phi / (np.exp(Y * (1 - np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
 
-    # g(s)= exp(-s), mu=s
-    # print(np.exp(sizes))
-    # epsilon = 1e-10  # Small offset to avoid zero in logarithm
-    # p = np.log(np.exp(sizes)-Tend)
-    phi = np.exp(-((np.log(np.exp(sizes)-Tend)-0.4)/0.1)**2)
-    Y   = np.log(np.exp(sizes)-Tend)
-    sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
+    Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))
+    phi = np.exp(-((Y-0.4)/0.1)**2)
+    # sol = (phi / (np.exp(Y * (1 - np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
+    denominator = np.exp(Y * (1 - np.exp(Y))) + 1e-15  # Adding a small positive constant
+    sol = (phi / denominator) * np.exp(Tend + sizes - (sizes * np.exp(sizes)))
+
+
+
+    # sol = (phi / (np.exp(Y * (-1 + np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
+    # sol = (phi / (np.exp(Y * (np.exp(Y) - 1)+np.exp(Y)))) * (np.exp(sizes * (1 - np.exp(sizes)) + np.exp(sizes)))
+    # # phi = np.exp(-(Y-10)**2)
+    # # sol = phi * np.exp((np.exp(-sizes)-sizes)*Tend)
+    # sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
+
+    # if sol.all() == sol1.all(): 
+    #     print(True)
+    # else:
+    #     print(False)
+
+
+    # sol = np.exp(-(np.log(np.exp(sizes))-10)**2) * np.exp(-np.log(np.exp(sizes))*Tend)
 
     # print(np.shape(sol))
 
@@ -61,23 +84,25 @@ for i in range(ntests): # Loop through datafiles
     # plt.show()
 
 # Print out the dataset 0 errors, q cannot be defined.
-print(Norm2[0])
-print(NormMax[0])
+print('For ds ='+ str(ds[0]))
+print('Norm2 = ' + str(Norm2[0]))
+print('NormMax = ' + str(NormMax[0]))
 print(' ')
 
 # Loop through the remaining datasets.
 for i in range(ntests-1):
-    print(Norm2[i+1]); print(NormMax[i+1]) # Print out error values.
-    print(np.log(Norm2[i+1]/Norm2[i]) / np.log(ds[i+1]/ds[i]) ) # L2 q estimate.
-    print(np.log(NormMax[i+1]/NormMax[i]) / np.log(ds[i+1]/ds[i]) ) # L-Max q estimate.
+    print('For ds ='+ str(ds[i+1]))
+    print('Norm2 = ' + str(Norm2[i+1])); print('NormMax = ' + str(NormMax[i+1])) # Print out error values.
+    print('L2 q estimate = ' + str(np.log(Norm2[i+1]/Norm2[i]) / np.log(ds[i+1]/ds[i]) )) # L2 q estimate.
+    print('LMax q estimate = ' + str(np.log(NormMax[i+1]/NormMax[i]) / np.log(ds[i+1]/ds[i]) )) # L-Max q estimate.
     print(' ')
 
-# # Plot the log-log for the errors.
+# Plot the log-log for the errors.
+# plt.loglog(ds, Norm2, label='Norm2')
+# plt.loglog(ds, NormMax, label='NormMax')
 plt.loglog(Norm2, label='Norm2')
 plt.loglog(NormMax, label='NormMax')
-
-# plt.plot(Norm2, label='Norm2')
-# plt.plot(NormMax, label='NormMax')
+# plt.loglog(ds, ds**2, label='order-2')
 
 plt.xlabel('ds')
 plt.ylabel('Norm')
