@@ -25,7 +25,7 @@ def LW_SPM(ds,dt,ntag,filename):
     g = np.ones([Nsizes]) # growth rate
     # g[0:int(Nsizes/2)] = np.linspace(0,-1,int(Nsizes/2))
     # g[0:int(Nsizes/2)] = np.exp(- sizes[0:int(Nsizes/2)])
-    g[:] = np.exp(- (sizes[:]))
+    g[:] = np.exp(-(sizes[:])) # change to size/6
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
     # mu = np.zeros([Nsizes]) # mortality
@@ -75,7 +75,12 @@ def LW_SPM(ds,dt,ntag,filename):
 
     # Initial condition
     # N[:] = np.exp(-(sizes-10)**2) # Initial condition setter  -- Gaussian centered at 10
-    N[:] = np.exp(-((sizes-0.4)/0.1)**2)
+    # N[:] = np.exp(-((sizes-2)/0.1)**2) # change more to the right
+    # N[:] = np.exp(-((sizes-0.4)/0.1)**2)
+    N[:] = np.exp(-((sizes-2)/0.1)**2)
+
+    # CFL dt < exp(-0.4) ds
+    # divide by 2 10 something smaller t han 1
 
     # Steve
     # phi = np.exp(-((np.log(np.exp(sizes))-0.4)/0.1)**2)

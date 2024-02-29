@@ -19,6 +19,9 @@ ds[0] = 0.005; ds[1] = 0.010
 ds[2] = 0.020; ds[3] = 0.025
 ds[4] = 0.050
 
+# ds = ds/10
+# ds = np.linspace(0.005,0.020,5)
+
 # Store for error calculations
 Norm2 = np.zeros(ntests) # L2 norm values.
 NormMax = np.zeros(ntests) # L-Max norm values.
@@ -38,46 +41,28 @@ for i in range(ntests): # Loop through datafiles
     # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2) * np.exp((np.exp(-sizes)-sizes)*Tend) # g(s)=1, mu=s
     # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2)* np.exp(np.exp(-sizes*Tend)) # g(s)=e(-s), mu=0
     
+    # g(s)=e(-s), mu= s
     # Y   = np.log(np.exp(sizes) - Tend)
+    Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))  
     # phi = np.exp(-((Y-0.4)/0.1)**2)
-    # sol = (phi/np.exp(Y*(np.exp(Y)-1)))*np.exp(Tend+sizes-sizes*np.exp(sizes))
+    phi = np.exp(-((Y-2)/0.1)**2)
+    sol = phi * np.exp(Tend + sizes - (sizes * np.exp(sizes)) - (Y * (1 - np.exp(Y))))
+
+    # Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))
+    # phi = np.exp(-((Y-0.4)/0.1)**2)
     # # sol = (phi / (np.exp(Y * (1 - np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
+    # denominator = np.exp(Y * (1 - np.exp(Y))) + 1e-15  # Adding a small positive constant
+    # sol = (phi / denominator) * np.exp(Tend + sizes - (sizes * np.exp(sizes)))
 
-    Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))
-    phi = np.exp(-((Y-0.4)/0.1)**2)
-    # sol = (phi / (np.exp(Y * (1 - np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
-    denominator = np.exp(Y * (1 - np.exp(Y))) + 1e-15  # Adding a small positive constant
-    sol = (phi / denominator) * np.exp(Tend + sizes - (sizes * np.exp(sizes)))
+    # print(Tend)
+    # print(np.shape(data))
 
-
-
-    # sol = (phi / (np.exp(Y * (-1 + np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
-    # sol = (phi / (np.exp(Y * (np.exp(Y) - 1)+np.exp(Y)))) * (np.exp(sizes * (1 - np.exp(sizes)) + np.exp(sizes)))
-    # # phi = np.exp(-(Y-10)**2)
-    # # sol = phi * np.exp((np.exp(-sizes)-sizes)*Tend)
-    # sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
-
-    # if sol.all() == sol1.all(): 
-    #     print(True)
-    # else:
-    #     print(False)
-
-
-    # sol = np.exp(-(np.log(np.exp(sizes))-10)**2) * np.exp(-np.log(np.exp(sizes))*Tend)
-
-    # print(np.shape(sol))
-
-    # X = sizes
-    # Y = np.linspace(0,Tend, n)
-    # X, Y = np.meshgrid(X, Y)
-
-    # fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-
-    # plt.plot(sizes,sol)
-    # plt.show()
-    # norms
+    # # norms
     Norm2[i] =  ((1/Nsizes)*np.sum((data[n,:]-sol[:])**2))**0.5 # L2 error.
     NormMax[i] = np.max(np.abs(data[n,:]-sol[:])) # L-Max error.
+
+    # print(data[n,:])
+    print(sol[:])
 
     # (Optional: Plot the differences.)
     # plt.plot(sizes,data[n,:]-sol)
@@ -85,24 +70,25 @@ for i in range(ntests): # Loop through datafiles
 
 # Print out the dataset 0 errors, q cannot be defined.
 print('For ds ='+ str(ds[0]))
-print('Norm2 = ' + str(Norm2[0]))
-print('NormMax = ' + str(NormMax[0]))
+print('Norm2 = ' + str(round(Norm2[0],10)))
+print('NormMax = ' + str(round(NormMax[0],10)))
 print(' ')
+
 
 # Loop through the remaining datasets.
 for i in range(ntests-1):
-    print('For ds ='+ str(ds[i+1]))
-    print('Norm2 = ' + str(Norm2[i+1])); print('NormMax = ' + str(NormMax[i+1])) # Print out error values.
-    print('L2 q estimate = ' + str(np.log(Norm2[i+1]/Norm2[i]) / np.log(ds[i+1]/ds[i]) )) # L2 q estimate.
-    print('LMax q estimate = ' + str(np.log(NormMax[i+1]/NormMax[i]) / np.log(ds[i+1]/ds[i]) )) # L-Max q estimate.
+    print('For ds =' + str(ds[i+1]))
+    print('Norm2 = ' + str(round(Norm2[i+1],10))); print('NormMax = ' + str(round(NormMax[i+1],10))) # Print out error values.
+    print('L2 q estimate = ' + str(round(np.log(Norm2[i+1]/Norm2[i]) / np.log(ds[i+1]/ds[i]),10) )) # L2 q estimate.
+    print('LMax q estimate = ' + str(round(np.log(NormMax[i+1]/NormMax[i]) / np.log(ds[i+1]/ds[i]),10) )) # L-Max q estimate.
     print(' ')
 
 # Plot the log-log for the errors.
-# plt.loglog(ds, Norm2, label='Norm2')
-# plt.loglog(ds, NormMax, label='NormMax')
-plt.loglog(Norm2, label='Norm2')
-plt.loglog(NormMax, label='NormMax')
-# plt.loglog(ds, ds**2, label='order-2')
+plt.loglog(ds, Norm2, label='Norm2')
+plt.loglog(ds, NormMax, label='NormMax')
+# plt.loglog(Norm2, label='Norm2')
+# plt.loglog(NormMax, label='NormMax')
+plt.loglog(ds, ds**2, label='order-2')
 
 plt.xlabel('ds')
 plt.ylabel('Norm')

@@ -11,6 +11,10 @@ ds[0] = 0.005; ds[1] = 0.010
 ds[2] = 0.020; ds[3] = 0.025
 ds[4] = 0.050
 
+# ds = ds/10
+
+# ds = np.linspace(0.005,0.020,5)
+
 # Change this value to get different ds indexes
 ds_index = 4
 
@@ -26,31 +30,31 @@ row, column = data.shape
 time_array = np.linspace(0,row-1, 4)
 # print(time_array)
 
-for n in range(4):
+for n in range(4): #4
 
     time = n/3
     print(time)
+
     # Analytical Solution
     # Y   = np.log(np.exp(sizes) - time)
-    Y = np.log(np.clip(np.exp(sizes) - time, a_min=1e-15, a_max=None))
-    phi = np.exp(-((Y-0.4)/0.1)**2)
-    # sol = (phi / (np.exp(Y * (1 - np.exp(Y))))) * (np.exp(time + sizes - (sizes * np.exp(sizes))))
-    denominator = np.exp(Y * (1 - np.exp(Y))) + 1e-15  # Adding a small positive constant
-    sol = (phi / denominator) * np.exp(time + sizes - (sizes * np.exp(sizes)))
+    Y = np.log(np.clip(np.exp(sizes) - time, a_min=1e-15, a_max=None))  # at time 1 and size 0 we have a nan value
+    # phi = np.exp(-((Y-0.4)/0.1)**2)
+    phi = np.exp(-((Y-2)/0.1)**2)
+    sol = phi * np.exp(time + sizes - (sizes * np.exp(sizes)) - (Y * (1 - np.exp(Y))))
+    # sol = phi * np.exp(np.exp(Y) * (Y-1) - (np.exp(sizes)- time)**(5/6)/5 + (np.exp(sizes))**(5/6)/5 + np.exp(sizes)*(1-sizes))
+    # sol = phi + np.exp(np.exp(Y)*(Y-1) - np.exp(Y)**(5/6)/5)
+
+    # print(Y[0])
 
     # Plot the Analytical and Numerical Solution
-    # plt.plot(sizes, solutions[t,:], label='Analytical', linestyle='solid')
     plt.plot(sizes, sol, label='Analytical', linestyle='solid')
     plt.plot(sizes, data[int(time_array[int(n)]),:], label='Numerical', linestyle='--')
     plt.xlabel('Size')
     plt.ylabel('Population')
     plt.title('Population Based on Size at time = ' + str(round(time,2)) + ' for ds = ' + str(ds[ds_index]))
     plt.legend()
-    plt.ylim(-.1, 1.1)  # Set y-axis limits from 0 to 12
+    plt.ylim(-.2, 1.1)  # Set y-axis limits from 0 to 12
     plt.show()
-
-
-
 
 
 
@@ -71,3 +75,5 @@ for n in range(4):
 
     # print(solutions.shape)
     # print(data.shape)
+
+    # plt.plot(sizes, solutions[t,:], label='Analytical', linestyle='solid')

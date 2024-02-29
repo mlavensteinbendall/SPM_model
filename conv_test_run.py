@@ -19,9 +19,14 @@ dtvals = np.zeros(nsamples) # Store for dt values.
 dsvals[0] = 0.005; dsvals[1] = 0.010
 dsvals[2] = 0.020; dsvals[3] = 0.025
 dsvals[4] = 0.050
+
+# dsvals = dsvals/10
+
 # Set the values for dt
 dt = 0.001
 ## End of ds test section
+
+# ds = np.linspace(0.005,0.020,5)
 
 ## Uncomment for dt test
 # dt convergence values
@@ -42,6 +47,7 @@ filename = 'ds_convergence/' # Folder name for data storage.
 for i,dsi in enumerate(dsvals):
 
     print('Entering loop ' + str(i)) # Progress update, loop start.
+    # print("CFL " + str(dt) + "<" + str(np.exp(-0.4)*dsi)) # it seems to be meeing the CFL condition
     # LW_SPM(dsi,dtvals[i],i,filename) # Model - ds run.
     LW_SPM(dsi,dt,i,filename) # Model - dt run.
     print('S Loop ' + str(i) + ' Complete.') # Progress update, loop end.
