@@ -13,33 +13,30 @@ def LW_SPM(ds,dt,ntag,filename):
     Tmax = 1 # End time
     Nsizes = int(Smax/ds)+1 # Total number of size-steps
     Ntimes = int(Tmax/dt)+1 # Total number of time-steps
+    # sizes = np.linspace(ds,Smax,num=Nsizes) # Grid of size points
     sizes = np.linspace(0,Smax,num=Nsizes) # Grid of size points
     times = np.linspace(0,Tmax,num=Ntimes) # Grid of times points
-
-    # print(sizes)
 
     # Initial condition
     N = np.zeros([Nsizes]) # Store for the current timepoint
 
     # Fitness functions
     g = np.ones([Nsizes]) # growth rate
-    # g[0:int(Nsizes/2)] = np.linspace(0,-1,int(Nsizes/2))
-    # g[0:int(Nsizes/2)] = np.exp(- sizes[0:int(Nsizes/2)])
-    g[:] = np.exp(-(sizes[:])) # change to size/6
+    g[:] = np.exp(-(sizes[:])) # To do: test for exp(- size/6)
     r = np.zeros([Nsizes])  # reproduction
     r[int(Nsizes/4):-1] = 0
-    # mu = np.zeros([Nsizes]) # mortality
+    mu = np.zeros([Nsizes]) # mortality
     # mu = np.ones([Nsizes]) # mortality
-    # mu[int(Nsizes/2):-1] = 0
-    # mu[int(Nsizes/2):-1] = sizes[int(Nsizes/2):-1]/Smax
-    # mu[:] = sizes[:]/Smax
-    mu = sizes
+    # mu = sizes #  To do: Look at smaller mu x
 
+
+    #Plot the growth rate and mortality rate
     # plt.plot(sizes,g)
     # plt.plot(sizes,mu)
     # plt.show()
 
-    # print(g)
+    # Pritn CFL
+    print("CFL number = ", max(g) * dt / ds)    
 
     # Difference matrices
     D1 = np.zeros([Nsizes,Nsizes]) # Store for 1st finite difference matrix
@@ -58,9 +55,6 @@ def LW_SPM(ds,dt,ntag,filename):
         # D1[ii,ii-2] = (1/12)/ds; D1[ii,ii-1] = (-2/3)/ds; D1[ii,ii+1] = (2/3)/ds; D1[ii,ii+2] = (-1/12)/ds
         # D2[ii,ii-2] = (-1/12)/(ds**2); D2[ii,ii-1] = (4/3)/(ds**2); D2[ii,ii] = (-5/2)/(ds**2); D2[ii,ii+1] = (4/3)/(ds**2); D2[ii,ii+2] = (-1/12)/(ds**2)
 
-    # print(D1)
-    # print(D2)
-
     # Difference co-efficients
     gp  = D1.dot(g) # Get numerical first derivative of g
     gpp = D2.dot(g) # Get numerical second derivative of g
@@ -77,16 +71,11 @@ def LW_SPM(ds,dt,ntag,filename):
     # N[:] = np.exp(-(sizes-10)**2) # Initial condition setter  -- Gaussian centered at 10
     # N[:] = np.exp(-((sizes-2)/0.1)**2) # change more to the right
     # N[:] = np.exp(-((sizes-0.4)/0.1)**2)
-    N[:] = np.exp(-((sizes-2)/0.1)**2)
+    N[:] = np.exp(-((sizes-5)/1)**2) #need to be wide enought to fix the oscilations 
+    # N[:] = np.exp(-((sizes-2)/0.5)**2)
 
     # CFL dt < exp(-0.4) ds
     # divide by 2 10 something smaller t han 1
-
-    # Steve
-    # phi = np.exp(-((np.log(np.exp(sizes))-0.4)/0.1)**2)
-    # Y   = np.log(np.exp(sizes))
-    # sol = (phi / (np.exp(Y * (np.exp(Y) - 1)))) * (np.exp( sizes - (sizes * np.exp(sizes))))
-    # N[:]=sol[:]
 
     # plt.plot(sizes, N)
     # plt.xlabel('Size')
@@ -102,10 +91,14 @@ def LW_SPM(ds,dt,ntag,filename):
                 file.write(" ")
             file.write("\n")
 
+            N[0] = 0
+
             # Step 1 - half step time, mortality
             N[:] = N[:]*np.exp(-mu[:]*dt/2)
+
             # Step 2 - half step time, growth
             N[:] = a1[:]*N[:] + a2[:]*(D1.dot(N)) + a3[:]*(D2.dot(N))
+
             # Step 3 - half step time, mortality
             N[:] = N[:]*np.exp(-mu[:]*dt/2)
             
@@ -131,3 +124,16 @@ def LW_SPM(ds,dt,ntag,filename):
     # plt.plot(sizes, N)
     # # plt.title('N0')
     # plt.show()      
+        
+
+   # Check to see if there are negative here
+    # result = a1[:] - 2*a3[:]
+    # result = a3[:] - a2[:]
+
+    # # Check if there are any negative values
+    # negative_values_exist = any(value < 0 for value in result)
+
+    # if negative_values_exist:
+    #     print("There are negative values in the expression (a1[:] - 2*a3[:])")
+    # else:
+    #     print("There are no negative values in the expression (a1[:] - 2*a3[:])")

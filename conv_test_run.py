@@ -6,6 +6,7 @@
 
 import numpy as np # Numpy for numpy
 from function_LW import LW_SPM
+import matplotlib.pyplot as plt
 
 # Check convergence in s-dimension.
 # ds0 = 0.005
@@ -24,6 +25,26 @@ dsvals[4] = 0.050
 
 # Set the values for dt
 dt = 0.001
+
+# dsvals[0] = dt*1; dsvals[1] = dt*2
+# dsvals[2] = dt*3; dsvals[3] = dt*4
+# dsvals[4] = dt*5
+
+indices = range(len(dsvals))
+
+# Plot points
+plt.plot(indices, dsvals, marker='o', linestyle='None', color='black', label='ds input')
+
+# Connect points with dashed lines
+plt.plot(indices, dsvals, linestyle='--', color='blue')
+plt.xlabel('Index')
+plt.ylabel('ds values')
+plt.title('ds values')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
 ## End of ds test section
 
 # ds = np.linspace(0.005,0.020,5)

@@ -19,6 +19,10 @@ ds[0] = 0.005; ds[1] = 0.010
 ds[2] = 0.020; ds[3] = 0.025
 ds[4] = 0.050
 
+# ds[0] = dt*1; ds[1] = dt*2
+# ds[2] = dt*3; ds[3] = dt*4
+# ds[4] = dt*5
+
 # ds = ds/10
 # ds = np.linspace(0.005,0.020,5)
 
@@ -29,40 +33,32 @@ NormMax = np.zeros(ntests) # L-Max norm values.
 for i in range(ntests): # Loop through datafiles
 
     Nsizes = int(Smax/ds[i])+1 # Get the number of spatial points in the data.
+    # sizes = np.linspace(ds[i],Smax,num=Nsizes) # Create an array of those sizes.
     sizes = np.linspace(0,Smax,num=Nsizes) # Create an array of those sizes.
     data = np.loadtxt('ds_convergence/test_' + str(i) + '.txt') # Load in relevant data.
     n = 1000 # Time-step of comparison.
     Tend = n*dt # Get the associated timepoint value.
-
-    # Analytical solution
-    # sol = np.exp(-(sizes-10-Tend)**2) # g(s)=1, mu=0
-    # sol = np.exp(-(sizes-10-Tend)**2) * np.exp(-Tend) # g(s)=1, mu=1
-    # # sol = np.exp(-(sizes-10-Tend)**2) * np.exp(-sizes*Tend) # g(s)=1, mu=s
-    # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2) * np.exp((np.exp(-sizes)-sizes)*Tend) # g(s)=1, mu=s
-    # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2)* np.exp(np.exp(-sizes*Tend)) # g(s)=e(-s), mu=0
     
-    # g(s)=e(-s), mu= s
-    # Y   = np.log(np.exp(sizes) - Tend)
-    Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))  
-    # phi = np.exp(-((Y-0.4)/0.1)**2)
-    phi = np.exp(-((Y-2)/0.1)**2)
-    sol = phi * np.exp(Tend + sizes - (sizes * np.exp(sizes)) - (Y * (1 - np.exp(Y))))
+    # Analytical Solution
+    Y   = np.log(np.exp(sizes) - Tend)
+    # Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))   
 
-    # Y = np.log(np.clip(np.exp(sizes) - Tend, a_min=1e-15, a_max=None))
+    # Initial Conditions
     # phi = np.exp(-((Y-0.4)/0.1)**2)
-    # # sol = (phi / (np.exp(Y * (1 - np.exp(Y))))) * (np.exp(Tend + sizes - (sizes * np.exp(sizes))))
-    # denominator = np.exp(Y * (1 - np.exp(Y))) + 1e-15  # Adding a small positive constant
-    # sol = (phi / denominator) * np.exp(Tend + sizes - (sizes * np.exp(sizes)))
+    phi = np.exp(-((Y-5)/1)**2)
 
-    # print(Tend)
-    # print(np.shape(data))
+    # Solution based on g(s) and mu(s)
+    # sol = phi * np.exp(Tend + sizes - (sizes * np.exp(sizes)) - (Y * (1 - np.exp(Y)))) # g(s)=e(-s), mu= s
+    sol = phi * np.exp(Y - np.log(Tend + np.exp(Y)))  # g(s) = exp(-s), mu(s) = 0
+
+    # print(sol)
 
     # # norms
     Norm2[i] =  ((1/Nsizes)*np.sum((data[n,:]-sol[:])**2))**0.5 # L2 error.
     NormMax[i] = np.max(np.abs(data[n,:]-sol[:])) # L-Max error.
 
     # print(data[n,:])
-    print(sol[:])
+    # print(sol[:])
 
     # (Optional: Plot the differences.)
     # plt.plot(sizes,data[n,:]-sol)
@@ -96,3 +92,10 @@ plt.title('Convergence based on ds')
 plt.legend()
 plt.show()
 
+
+    # Analytical solution
+    # sol = np.exp(-(sizes-10-Tend)**2) # g(s)=1, mu=0
+    # sol = np.exp(-(sizes-10-Tend)**2) * np.exp(-Tend) # g(s)=1, mu=1
+    # # sol = np.exp(-(sizes-10-Tend)**2) * np.exp(-sizes*Tend) # g(s)=1, mu=s
+    # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2) * np.exp((np.exp(-sizes)-sizes)*Tend) # g(s)=1, mu=s
+    # sol = np.exp(-(np.log(np.exp(sizes)-Tend)-10)**2)* np.exp(np.exp(-sizes*Tend)) # g(s)=e(-s), mu=0
